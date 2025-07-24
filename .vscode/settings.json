@@ -1,0 +1,31 @@
+{
+  // Oxlint 配置
+  "oxc.enable": true,
+  "oxc.configPath": "./oxlint.json",
+
+  // 编辑器配置
+  "editor.codeActionsOnSave": {
+    "source.fixAll.oxc": "explicit",
+    "source.organizeImports": "explicit"
+  },
+
+  // 文件关联
+  "files.associations": {
+    "oxlint.json": "jsonc"
+  },
+
+  // TypeScript 配置
+  "typescript.preferences.includePackageJsonAutoImports": "auto",
+  "typescript.suggest.autoImports": true,
+
+  // Prettier 配置
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+
+  // 其他有用设置
+  "editor.rulers": [80, 120],
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true
+}

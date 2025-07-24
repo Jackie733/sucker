@@ -1,0 +1,14 @@
+{
+  "rules": {
+    "correctness": "error",
+    "suspicious": "error",
+    "perf": "warn",
+    "style": "warn",
+    "pedantic": "off",
+    "nursery": "off",
+    "restriction": "off"
+  },
+  "allow": ["no-console"],
+  "deny": ["no-unused-vars", "no-undef"],
+  "ignore": ["dist/**/*", "node_modules/**/*", "**/*.js", "**/*.d.ts"]
+}
