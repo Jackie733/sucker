@@ -1,37 +1,37 @@
-# Oxlint 编辑器集成指南
+# Oxlint Editor Integration Guide
 
-## 问题回答：Oxlint 是否有类似 ESLint 的红线/黄线提示？
+## Question: Does Oxlint Have ESLint-like Red/Yellow Line Indicators?
 
-**答案：是的！** Oxlint 通过官方 VS Code 插件提供了与 ESLint 类似的编辑器内实时错误提示功能。
+**Answer: Yes!** Oxlint provides ESLint-like real-time error indicators in the editor through its official VS Code extension.
 
-## 编辑器集成效果对比
+## Editor Integration Effects Comparison
 
-### ESLint 集成效果
+### ESLint Integration Effects
 
-- ❌ 红色波浪线：错误 (errors)
-- ⚠️ 黄色波浪线：警告 (warnings)
-- 💡 蓝色灯泡：可自动修复的问题
-- 🔧 右键菜单：快速修复选项
+- ❌ Red squiggly lines: Errors
+- ⚠️ Yellow squiggly lines: Warnings
+- 💡 Blue lightbulb: Auto-fixable issues
+- 🔧 Right-click menu: Quick fix options
 
-### Oxlint 集成效果 (通过 oxc.oxc-vscode 插件)
+### Oxlint Integration Effects (via oxc.oxc-vscode extension)
 
-- ❌ 红色波浪线：错误 (errors)
-- ⚠️ 黄色波浪线：警告 (warnings)
-- 💡 自动修复建议
-- 🚀 **更快的响应速度** (几乎实时)
+- ❌ Red squiggly lines: Errors
+- ⚠️ Yellow squiggly lines: Warnings
+- 💡 Auto-fix suggestions
+- 🚀 **Faster response time** (almost real-time)
 
-## 已完成的配置
+## Completed Configuration
 
-### 1. VS Code 插件安装 ✅
+### 1. VS Code Extension Installation ✅
 
 ```bash
-# 已安装插件
-oxc.oxc-vscode - 官方 Oxc VS Code 插件
+# Installed extension
+oxc.oxc-vscode - Official Oxc VS Code Extension
 ```
 
-### 2. 工作区配置 ✅
+### 2. Workspace Configuration ✅
 
-文件：`.vscode/settings.json`
+File: `.vscode/settings.json`
 
 ```json
 {
@@ -45,80 +45,80 @@ oxc.oxc-vscode - 官方 Oxc VS Code 插件
 }
 ```
 
-### 3. Oxlint 规则配置 ✅
+### 3. Oxlint Rules Configuration ✅
 
-文件：`oxlint.json`
+File: `oxlint.json`
 
 ```json
 {
   "rules": {
-    "correctness": "error", // 红色波浪线
-    "suspicious": "error", // 红色波浪线
-    "perf": "warn", // 黄色波浪线
-    "style": "warn" // 黄色波浪线
+    "correctness": "error", // Red squiggly lines
+    "suspicious": "error", // Red squiggly lines
+    "perf": "warn", // Yellow squiggly lines
+    "style": "warn" // Yellow squiggly lines
   }
 }
 ```
 
-## 实际测试效果
+## Actual Test Results
 
-我创建了一个测试文件 `src/test-oxlint.ts`，包含常见的代码问题：
+I created a test file `src/test-oxlint.ts` with common code issues:
 
-### 检测到的问题类型：
+### Detected Issue Types:
 
-1. **未使用变量** (警告⚠️)：黄色波浪线
-2. **条件赋值** (错误❌)：红色波浪线
-3. **常量重新赋值** (错误❌)：红色波浪线
-4. **常量条件** (错误❌)：红色波浪线
+1. **Unused Variables** (Warning⚠️): Yellow squiggly lines
+2. **Conditional Assignment** (Error❌): Red squiggly lines
+3. **Constant Reassignment** (Error❌): Red squiggly lines
+4. **Constant Conditions** (Error❌): Red squiggly lines
 
-### 性能表现：
+### Performance Results:
 
-- **Oxlint**: 6ms 处理 1 个文件
-- **87 个规则** 同时检查
-- **8 线程** 并行处理
+- **Oxlint**: 6ms processing 1 file
+- **87 rules** checked simultaneously
+- **8 threads** parallel processing
 
-## 使用体验对比
+## User Experience Comparison
 
-| 特性        | ESLint         | Oxlint           |
-| ----------- | -------------- | ---------------- |
-| 🔴 错误提示 | ✅ 红色波浪线  | ✅ 红色波浪线    |
-| 🟡 警告提示 | ✅ 黄色波浪线  | ✅ 黄色波浪线    |
-| ⚡ 响应速度 | 🐌 较慢 (秒级) | 🚀 极快 (毫秒级) |
-| 🔧 自动修复 | ✅ 支持        | ✅ 支持          |
-| 💡 快速修复 | ✅ 丰富        | 🔄 基础          |
-| 📱 悬停信息 | ✅ 详细        | ✅ 简洁          |
-| 🎯 准确性   | ✅ 高          | ✅ 高            |
+| Feature               | ESLint                   | Oxlint                   |
+| --------------------- | ------------------------ | ------------------------ |
+| 🔴 Error Indicators   | ✅ Red squiggly lines    | ✅ Red squiggly lines    |
+| 🟡 Warning Indicators | ✅ Yellow squiggly lines | ✅ Yellow squiggly lines |
+| ⚡ Response Speed     | 🐌 Slower (seconds)      | 🚀 Extremely fast (ms)   |
+| 🔧 Auto-fix           | ✅ Supported             | ✅ Supported             |
+| 💡 Quick Fix          | ✅ Rich                  | 🔄 Basic                 |
+| 📱 Hover Info         | ✅ Detailed              | ✅ Concise               |
+| 🎯 Accuracy           | ✅ High                  | ✅ High                  |
 
-## 配置建议
+## Configuration Recommendations
 
-### 推荐配置（已应用）
+### Recommended Configuration (Already Applied)
 
 ```json
 {
-  // 启用实时检查
+  // Enable real-time checking
   "oxc.lint.enable": true,
 
-  // 保存时自动修复
+  // Auto-fix on save
   "oxc.lint.onSave": true,
 
-  // 保存时执行修复
+  // Execute fixes on save
   "editor.codeActionsOnSave": {
     "source.fixAll.oxc": "explicit"
   }
 }
 ```
 
-### 可选增强配置
+### Optional Enhanced Configuration
 
 ```json
 {
-  // 禁用 ESLint 避免冲突
+  // Disable ESLint to avoid conflicts
   "eslint.enable": false,
 
-  // 设置 Oxlint 为默认 linter
+  // Set Oxlint as default linter
   "typescript.preferences.includePackageJsonAutoImports": "auto",
 
-  // 自定义错误严重程度
+  // Custom error severity
   "oxc.lint.rules": {
     "no-unused-vars": "warn",
     "no-console": "off"
@@ -126,33 +126,33 @@ oxc.oxc-vscode - 官方 Oxc VS Code 插件
 }
 ```
 
-## 实用技巧
+## Practical Tips
 
-### 1. 快捷键使用
+### 1. Keyboard Shortcuts
 
 - `Ctrl+Shift+P` → "Oxc: Fix all auto-fixable problems"
-- `F8` / `Shift+F8`: 跳转到下一个/上一个问题
-- `Ctrl+.`: 快速修复菜单
+- `F8` / `Shift+F8`: Jump to next/previous issue
+- `Ctrl+.`: Quick fix menu
 
-### 2. 状态栏信息
+### 2. Status Bar Information
 
-- 显示当前文件的错误/警告数量
-- 点击可快速跳转到问题位置
+- Shows error/warning count for current file
+- Click to quickly jump to issue location
 
-### 3. 问题面板
+### 3. Problems Panel
 
-- `Ctrl+Shift+M`: 打开问题面板
-- 查看所有文件的 lint 问题汇总
+- `Ctrl+Shift+M`: Open problems panel
+- View lint issue summary for all files
 
-## 结论
+## Conclusion
 
-✅ **Oxlint 完全支持编辑器内的红线/黄线提示功能**
+✅ **Oxlint fully supports in-editor red/yellow line indicators**
 
-通过官方 VS Code 插件，Oxlint 提供了与 ESLint 相似甚至更好的编辑器集成体验：
+Through the official VS Code extension, Oxlint provides an editor integration experience similar to or even better than ESLint:
 
-1. **视觉效果相同**：红色错误线、黄色警告线
-2. **响应更快**：毫秒级响应 vs ESLint 的秒级响应
-3. **功能完整**：自动修复、悬停信息、快速修复
-4. **配置简单**：零配置开箱即用
+1. **Same Visual Effects**: Red error lines, yellow warning lines
+2. **Faster Response**: Millisecond response vs ESLint's second-level response
+3. **Complete Features**: Auto-fix, hover information, quick fixes
+4. **Simple Configuration**: Zero-config out-of-the-box
 
-现在你的项目已经完全配置好了 Oxlint 的编辑器集成，你可以享受超快速的代码检查体验！
+Now your project has fully configured Oxlint editor integration, and you can enjoy ultra-fast code checking experience!

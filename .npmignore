@@ -8,7 +8,6 @@ src/
 .env.example
 .vscode/
 docs/
-framework-design.md
 
 # Build artifacts
 tsconfig.json
@@ -37,7 +36,5 @@ test/
 # Example application
 src/app.ts
 
-# Documentation files (keep README.md)
-FRAMEWORK_REQUIREMENTS.md
-QUICK_SETUP.md
-CHECKLIST.md
+# Documentation files are in docs/ directory (excluded above)
+# Only README.md is included in the package

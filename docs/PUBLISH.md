@@ -42,7 +42,7 @@ This compiles TypeScript to JavaScript in the `dist/` directory.
 npm pack
 
 # Test installation locally
-npm install -g ./jackie733-sucker-framework-0.1.0.tgz
+npm install -g ./jackie733-sucker-0.1.0.tgz
 ```
 
 ### 5. Publish to npm
@@ -61,7 +61,7 @@ npm publish
 
 ### 6. Verify publication
 
-Check your package at: https://www.npmjs.com/package/@jackie733/sucker-framework
+Check your package at: https://www.npmjs.com/package/@jackie733/sucker
 
 ## Version Management
 
@@ -143,13 +143,13 @@ Current package information:
 npm whoami
 
 # Check package info
-npm info @jackie733/sucker-framework
+npm info @jackie733/sucker
 
 # List your published packages
 npm ls --depth=0
 
 # Unpublish (within 24 hours)
-npm unpublish @jackie733/sucker-framework@0.1.0
+npm unpublish @jackie733/sucker@0.1.0
 ```
 
 ## Next Steps

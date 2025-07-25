@@ -2,7 +2,7 @@
 
 A modern, high-performance web framework built with TypeScript and Node.js native HTTP module.
 
-[![npm version](https://badge.fury.io/js/@jackie733/sucker-framework.svg)](https://badge.fury.io/js/@jackie733/sucker-framework)
+[![npm version](https://badge.fury.io/js/@jackie733/sucker.svg)](https://badge.fury.io/js/@jackie733/sucker)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-20.6+-green.svg)](https://nodejs.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -328,6 +328,24 @@ CMD ["node", "index.js"]
   }
 }
 ```
+
+## 📚 Documentation
+
+For detailed guides and references, see the **[documentation directory](docs/README.md)**:
+
+- **Getting Started**
+  - [Quick Setup Guide](docs/QUICK_SETUP.md) - GitHub Actions auto-publishing setup
+  - [Framework Requirements](docs/FRAMEWORK_REQUIREMENTS.md) - Feature implementation status
+
+- **Development & Publishing**
+  - [Publishing Guide](docs/PUBLISH.md) - npm publishing instructions
+  - [Automation Setup](docs/AUTOMATION_SETUP.md) - CI/CD configuration
+
+- **Code Quality & Tooling**
+  - [Oxlint Guide](docs/OXLINT_GUIDE.md) - Fast Rust-based linting
+  - [Oxlint Editor Integration](docs/OXLINT_EDITOR_INTEGRATION.md) - VS Code setup
+
+📋 **[View Full Documentation Index](docs/INDEX.md)** for a complete list of all guides and references.
 
 ## 📚 Examples
 

@@ -1,6 +1,6 @@
 /**
- * 路由系统
- * 支持参数路由、通配符、中间件等现代化路由功能
+ * Router System
+ * Supports parameter routing, wildcards, middleware and other modern routing features
  */
 
 export interface RouteParams {
@@ -27,8 +27,8 @@ interface RouteNode {
 }
 
 /**
- * 高性能路由器
- * 使用Trie树实现快速路由匹配
+ * High-performance router
+ * Uses Trie tree for fast route matching
  */
 export class Router {
   private root: RouteNode;
@@ -38,7 +38,7 @@ export class Router {
   }
 
   /**
-   * 添加路由
+   * Add route
    */
   addRoute(
     method: string,
@@ -49,7 +49,7 @@ export class Router {
     const segments = this.parsePath(path);
     let currentNode = this.root;
 
-    // 构建路由树
+    // Build routing tree
     for (const segment of segments) {
       const key = this.getNodeKey(segment);
 
@@ -60,13 +60,13 @@ export class Router {
       currentNode = currentNode.children.get(key)!;
     }
 
-    // 设置处理器和中间件
+    // Set handler and middleware
     currentNode.handlers.set(method.toUpperCase(), handler);
     currentNode.middleware.push(...middleware);
   }
 
   /**
-   * 匹配路由
+   * Match route
    */
   match(method: string, path: string): RouteMatch | null {
     const segments = this.parsePath(path);
@@ -91,7 +91,7 @@ export class Router {
   }
 
   /**
-   * 递归匹配路由节点
+   * Recursively match route nodes
    */
   private matchNode(
     node: RouteNode,
@@ -99,7 +99,7 @@ export class Router {
     index: number,
     params: RouteParams
   ): RouteNode | null {
-    // 匹配完成
+    // Matching complete
     if (index === segments.length) {
       return node.handlers.size > 0 ? node : null;
     }
@@ -107,7 +107,7 @@ export class Router {
     const segment = segments[index];
     if (!segment) return null;
 
-    // 1. 尝试精确匹配
+    // 1. Try exact match
     if (node.children.has(segment)) {
       const result = this.matchNode(
         node.children.get(segment)!,
@@ -118,7 +118,7 @@ export class Router {
       if (result) return result;
     }
 
-    // 2. 尝试参数匹配
+    // 2. Try parameter matching
     for (const [key, child] of node.children) {
       if (child.isParam && child.paramName) {
         const paramsCopy = { ...params };
@@ -132,7 +132,7 @@ export class Router {
       }
     }
 
-    // 3. 尝试通配符匹配
+    // 3. Try wildcard matching
     for (const [key, child] of node.children) {
       if (child.isWildcard) {
         const remaining = segments.slice(index).join('/');
@@ -145,7 +145,7 @@ export class Router {
   }
 
   /**
-   * 解析路径为段
+   * Parse path into segments
    */
   private parsePath(path: string): string[] {
     return path
@@ -155,7 +155,7 @@ export class Router {
   }
 
   /**
-   * 创建路由节点
+   * Create route node
    */
   private createNode(segment: string): RouteNode {
     const isParam = segment.startsWith(':');
@@ -173,7 +173,7 @@ export class Router {
   }
 
   /**
-   * 获取节点键
+   * Get node key
    */
   private getNodeKey(segment: string): string {
     if (segment.startsWith(':')) {
@@ -186,7 +186,7 @@ export class Router {
   }
 
   /**
-   * 获取所有路由信息 (调试用)
+   * Get all route information (for debugging)
    */
   getRoutes(): Array<{ method: string; path: string; middleware: number }> {
     const routes: Array<{ method: string; path: string; middleware: number }> =

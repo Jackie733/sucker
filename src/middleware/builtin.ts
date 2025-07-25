@@ -1,13 +1,12 @@
 /**
- * 内置中间件集合
- * 提供常用的Web服务器中间件功能
+ * Common Web Server Middleware Functions
  */
 
 import { Context } from '../core/context';
 import { Middleware } from '../core/middleware';
 
 /**
- * CORS中间件
+ * CORS Middleware
  */
 export function cors(
   options: {
@@ -31,7 +30,7 @@ export function cors(
   return async (ctx: Context, next: () => Promise<void>) => {
     const requestOrigin = ctx.getHeader('origin') as string;
 
-    // 设置Access-Control-Allow-Origin
+    // Set Access-Control-Allow-Origin
     if (typeof origin === 'string') {
       ctx.setHeader('Access-Control-Allow-Origin', origin);
     } else if (Array.isArray(origin)) {
@@ -44,7 +43,7 @@ export function cors(
       }
     }
 
-    // 设置其他CORS头
+    // Set other CORS headers
     ctx.setHeader('Access-Control-Allow-Methods', methods.join(', '));
     ctx.setHeader('Access-Control-Allow-Headers', allowedHeaders.join(', '));
 
@@ -56,7 +55,7 @@ export function cors(
       ctx.setHeader('Access-Control-Allow-Credentials', 'true');
     }
 
-    // 处理预检请求
+    // Handle preflight requests
     if (ctx.method === 'OPTIONS') {
       ctx.setHeader('Access-Control-Max-Age', maxAge.toString());
       ctx.status = 204;
@@ -69,7 +68,7 @@ export function cors(
 }
 
 /**
- * 请求日志中间件
+ * Request logging middleware
  */
 export function logger(
   options: {
@@ -103,7 +102,7 @@ export function logger(
       timestamp: new Date().toISOString()
     };
 
-    // 根据格式输出日志
+    // Output logs based on format
     switch (format) {
       case 'tiny':
         console.log(
@@ -129,7 +128,7 @@ export function logger(
 }
 
 /**
- * 请求体解析中间件
+ * Request body parsing middleware
  */
 export function bodyParser(
   options: {
@@ -156,7 +155,7 @@ export function bodyParser(
 }
 
 /**
- * 静态文件服务中间件
+ * Static file serving middleware
  */
 export function staticFiles(
   root: string,
@@ -182,7 +181,7 @@ export function staticFiles(
 
     let path = ctx.url;
 
-    // 检查前缀
+    // Check prefix
     if (prefix && !path.startsWith(prefix)) {
       await next();
       return;
@@ -192,7 +191,7 @@ export function staticFiles(
       path = path.slice(prefix.length);
     }
 
-    // 处理点文件
+    // Handle dot files
     if (dotfiles === 'deny' && path.includes('/.')) {
       ctx.status = 403;
       ctx.text('Forbidden');
@@ -204,14 +203,14 @@ export function staticFiles(
       return;
     }
 
-    // 这里应该实现文件系统访问逻辑
-    // 为简化示例，暂时跳过实际文件读取
+    // File system access logic should be implemented here
+    // Skipping actual file reading for simplified example
     await next();
   };
 }
 
 /**
- * 错误处理中间件
+ * Error handling middleware
  */
 export function errorHandler(
   options: {
@@ -229,13 +228,13 @@ export function errorHandler(
 
       ctx.status = 500;
 
-      // 自定义错误模板
+      // Custom error template
       if (template) {
         ctx.body = template(err, ctx);
         return;
       }
 
-      // 默认错误响应
+      // Default error response
       const errorResponse = {
         error: 'Internal Server Error',
         message:
@@ -251,7 +250,7 @@ export function errorHandler(
 }
 
 /**
- * 请求频率限制中间件
+ * Request rate limiting middleware
  */
 export function rateLimit(
   options: {
@@ -263,7 +262,7 @@ export function rateLimit(
   } = {}
 ): Middleware {
   const {
-    windowMs = 15 * 60 * 1000, // 15分钟
+    windowMs = 15 * 60 * 1000, // 15 minutes
     max = 100,
     message = 'Too many requests',
     standardHeaders = true,
@@ -293,7 +292,7 @@ export function rateLimit(
 
     const current = requests.get(key)!;
 
-    // 设置响应头
+    // Set response headers
     if (standardHeaders) {
       ctx.setHeader('RateLimit-Limit', max.toString());
       ctx.setHeader(

@@ -1,19 +1,19 @@
 /**
- * 框架使用示例
- * 展示如何使用自建Web框架创建博客系统
+ * Example Blog Application
+ * Demonstrates how to use the custom web framework to create a blog system
  */
 
 import { Application } from './core/application';
 import { Context } from './core/context';
 import {
-  cors,
-  logger,
   bodyParser,
+  cors,
   errorHandler,
+  logger,
   rateLimit
 } from './middleware/builtin';
 
-// 创建应用实例
+// Create application instance
 const app = new Application({
   port: parseInt(process.env.PORT || '3000'),
   host: '0.0.0.0',
@@ -21,7 +21,7 @@ const app = new Application({
   timeout: 30000
 });
 
-// 添加全局中间件
+// Add global middleware
 app.use(errorHandler({ expose: true }));
 app.use(logger({ format: 'combined' }));
 app.use(
@@ -37,14 +37,14 @@ app.use(
 app.use(bodyParser());
 app.use(
   rateLimit({
-    windowMs: 15 * 60 * 1000, // 15分钟
+    windowMs: 15 * 60 * 1000, // 15 minutes
     max: 100
   })
 );
 
-// 定义路由
+// Define routes
 
-// 首页
+// Home page
 app.get('/', async (ctx: Context) => {
   ctx.json({
     message: 'Welcome to Custom Blog Framework',
@@ -53,7 +53,7 @@ app.get('/', async (ctx: Context) => {
   });
 });
 
-// 健康检查
+// Health check
 app.get('/health', async (ctx: Context) => {
   ctx.json({
     status: 'ok',
@@ -63,7 +63,7 @@ app.get('/health', async (ctx: Context) => {
   });
 });
 
-// 模拟博客数据
+// Mock blog data
 const mockPosts = [
   {
     id: 1,
@@ -88,9 +88,9 @@ const mockPosts = [
   }
 ];
 
-// 博客相关路由
+// Blog related routes
 
-// 获取所有文章
+// Get all posts
 app.get('/api/posts', async (ctx: Context) => {
   const page = parseInt(ctx.query.page as string) || 1;
   const limit = parseInt(ctx.query.limit as string) || 10;
@@ -109,7 +109,7 @@ app.get('/api/posts', async (ctx: Context) => {
   });
 });
 
-// 获取单篇文章
+// Get single post
 app.get('/api/posts/:id', async (ctx: Context) => {
   const id = parseInt(ctx.params.id || '0');
 
@@ -130,7 +130,7 @@ app.get('/api/posts/:id', async (ctx: Context) => {
   ctx.json(post);
 });
 
-// 创建文章
+// Create post
 app.post('/api/posts', async (ctx: Context) => {
   await ctx.parseBody();
   const { title, content } = ctx.body as any;
@@ -155,7 +155,7 @@ app.post('/api/posts', async (ctx: Context) => {
   ctx.json(newPost);
 });
 
-// 更新文章
+// Update post
 app.put('/api/posts/:id', async (ctx: Context) => {
   const id = parseInt(ctx.params.id || '0');
 
@@ -196,7 +196,7 @@ app.put('/api/posts/:id', async (ctx: Context) => {
   ctx.json(mockPosts[postIndex]);
 });
 
-// 删除文章
+// Delete post
 app.delete('/api/posts/:id', async (ctx: Context) => {
   const id = parseInt(ctx.params.id || '0');
 
@@ -220,9 +220,9 @@ app.delete('/api/posts/:id', async (ctx: Context) => {
   ctx.text('');
 });
 
-// 用户认证相关路由
+// User authentication related routes
 
-// 登录
+// Login
 app.post('/api/auth/login', async (ctx: Context) => {
   await ctx.parseBody();
   const { username, password } = ctx.body as any;
@@ -233,7 +233,7 @@ app.post('/api/auth/login', async (ctx: Context) => {
     return;
   }
 
-  // 简单的模拟认证
+  // Simple mock authentication
   if (username === 'admin' && password === 'password') {
     const token = 'mock-jwt-token-' + Date.now();
     ctx.json({
@@ -247,7 +247,7 @@ app.post('/api/auth/login', async (ctx: Context) => {
   }
 });
 
-// 获取用户信息
+// Get user info
 app.get('/api/auth/me', async (ctx: Context) => {
   const token = ctx.getHeader('authorization');
 
@@ -263,7 +263,7 @@ app.get('/api/auth/me', async (ctx: Context) => {
   });
 });
 
-// 默认的404处理
+// Default 404 handler
 app.use(async (ctx: Context, next: () => Promise<void>) => {
   await next();
 
@@ -276,7 +276,7 @@ app.use(async (ctx: Context, next: () => Promise<void>) => {
   }
 });
 
-// 启动服务器
+// Start server
 async function startServer() {
   try {
     app.on('ready', (info: any) => {
@@ -300,7 +300,7 @@ async function startServer() {
   }
 }
 
-// 启动应用
+// Start application
 if (require.main === module) {
   startServer();
 }

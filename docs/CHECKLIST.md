@@ -2,7 +2,7 @@
 
 ## ✅ Completed Steps
 
-- [x] **Package Configuration**: Updated package.json with scoped name "@jackie733/sucker-framework"
+- [x] **Package Configuration**: Updated package.json with scoped name "@jackie733/sucker"
 - [x] **Entry Points**: Configured main and types entry points (dist/index.js, dist/index.d.ts)
 - [x] **Export Structure**: Created proper index.ts files for clean exports
 - [x] **npm Metadata**: Added description, keywords, author, license, repository, etc.
@@ -22,7 +22,7 @@ Your package is now ready for npm publishing! Here's what's included:
 ### Package Structure
 
 ```
-@jackie733/sucker-framework/
+@jackie733/sucker/
 ├── dist/                    # Compiled JavaScript + TypeScript definitions
 │   ├── core/               # Framework core (Application, Context, Router, etc.)
 │   ├── middleware/         # Built-in middleware exports
@@ -34,8 +34,8 @@ Your package is now ready for npm publishing! Here's what's included:
 
 ### Exports Available
 
-- **Main**: `import { Application } from '@jackie733/sucker-framework'`
-- **Middleware**: `import { cors, logger } from '@jackie733/sucker-framework/middleware'`
+- **Main**: `import { Application } from '@jackie733/sucker'`
+- **Middleware**: `import { cors, logger } from '@jackie733/sucker/middleware'`
 - **Types**: Full TypeScript definitions included
 
 ### Final Steps to Publish
@@ -53,20 +53,20 @@ Your package is now ready for npm publishing! Here's what's included:
    ```
 
 3. **Verify publication**:
-   - Check at https://www.npmjs.com/package/@jackie733/sucker-framework
-   - Test installation: `npm install @jackie733/sucker-framework`
+   - Check at https://www.npmjs.com/package/@jackie733/sucker
+   - Test installation: `npm install @jackie733/sucker`
 
 ## 🎉 Success!
 
 Once published, users can install and use your framework:
 
 ```bash
-npm install @jackie733/sucker-framework
+npm install @jackie733/sucker
 ```
 
 ```typescript
-import { Application } from '@jackie733/sucker-framework';
-import { cors, logger } from '@jackie733/sucker-framework/middleware';
+import { Application } from '@jackie733/sucker';
+import { cors, logger } from '@jackie733/sucker/middleware';
 
 const app = new Application();
 app.use(cors());

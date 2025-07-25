@@ -1,6 +1,6 @@
 /**
- * 中间件管理器
- * 实现洋葱模型的异步中间件执行
+ * Middleware Manager
+ * Implements asynchronous middleware execution with onion model
  */
 
 import { Context } from './context';
@@ -11,14 +11,14 @@ export type Middleware = (
 ) => Promise<void>;
 
 /**
- * 中间件管理器
- * 支持洋葱模型的中间件执行顺序
+ * Middleware Manager
+ * Supports onion model middleware execution order
  */
 export class MiddlewareManager {
   private middlewares: Middleware[] = [];
 
   /**
-   * 添加中间件
+   * Add middleware
    */
   use(middleware: Middleware): void {
     if (typeof middleware !== 'function') {
@@ -28,8 +28,7 @@ export class MiddlewareManager {
   }
 
   /**
-   * 执行中间件链
-   * 实现洋葱模型：middleware1 -> middleware2 -> handler -> middleware2 -> middleware1
+   * Middleware execution using the onion model: middleware1 -> middleware2 -> handler -> middleware2 -> middleware1
    */
   async execute(
     ctx: Context,
@@ -39,12 +38,12 @@ export class MiddlewareManager {
     let finished = false;
 
     const dispatch = async (i: number): Promise<void> => {
-      // 如果已经完成或响应已发送，直接返回
+      // Return directly if already finished or response sent
       if (finished || ctx.responded) {
         return;
       }
 
-      // 防止重复调用同一个索引
+      // Prevent calling the same index multiple times
       if (i <= index) {
         throw new Error('next() called multiple times');
       }
@@ -52,7 +51,7 @@ export class MiddlewareManager {
       index = i;
 
       if (i === this.middlewares.length) {
-        // 执行最终处理器
+        // Execute final handler
         finished = true;
         await finalHandler();
         return;
@@ -81,14 +80,14 @@ export class MiddlewareManager {
   }
 
   /**
-   * 获取中间件数量
+   * Get middleware count
    */
   get length(): number {
     return this.middlewares.length;
   }
 
   /**
-   * 清空所有中间件
+   * Clear all middleware
    */
   clear(): void {
     this.middlewares = [];

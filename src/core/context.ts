@@ -1,11 +1,11 @@
 /**
- * 请求上下文
- * 封装request和response，提供便捷的API
+ * HTTP Context Class
+ * Provides modern request-response handling APIs
  */
 
 import { IncomingMessage, ServerResponse } from 'node:http';
-import { parse as parseUrl } from 'node:url';
 import { parse as parseQuery } from 'node:querystring';
+import { parse as parseUrl } from 'node:url';
 
 export interface ContextOptions {
   maxRequestSize: number;
@@ -16,8 +16,8 @@ export interface ParsedBody {
 }
 
 /**
- * HTTP上下文类
- * 提供现代化的请求响应处理API
+ * HTTP Context and Response/Request Wrapper
+ * Encapsulates request and response, provides convenient APIs
  */
 export class Context {
   public readonly request: IncomingMessage;
@@ -47,7 +47,7 @@ export class Context {
   }
 
   /**
-   * 获取/设置响应状态码
+   * Get/Set response status code
    */
   get status(): number {
     return this._status;
@@ -58,14 +58,14 @@ export class Context {
   }
 
   /**
-   * 检查响应是否已发送
+   * Check if response has been sent
    */
   get responded(): boolean {
     return this._responded || this.response.headersSent;
   }
 
   /**
-   * 获取/设置响应体
+   * Get/Set response body
    */
   get body(): ParsedBody | null {
     return this._body;
@@ -76,42 +76,42 @@ export class Context {
   }
 
   /**
-   * 获取请求方法
+   * Get request method
    */
   get method(): string {
     return this.request.method || 'GET';
   }
 
   /**
-   * 获取请求URL
+   * Get request URL
    */
   get url(): string {
     return this.request.url || '/';
   }
 
   /**
-   * 获取请求头
+   * Get request headers
    */
   get headers(): { [key: string]: string | string[] | undefined } {
     return this.request.headers;
   }
 
   /**
-   * 获取特定请求头
+   * Get specific request header
    */
   getHeader(name: string): string | string[] | undefined {
     return this.request.headers[name.toLowerCase()];
   }
 
   /**
-   * 设置响应头
+   * Set response header
    */
   setHeader(name: string, value: string | number): void {
     this._headers[name] = String(value);
   }
 
   /**
-   * 设置多个响应头
+   * Set multiple response headers
    */
   setHeaders(headers: { [key: string]: string | number }): void {
     for (const [name, value] of Object.entries(headers)) {
@@ -120,7 +120,7 @@ export class Context {
   }
 
   /**
-   * 发送JSON响应
+   * Send JSON response
    */
   json(data: any, status?: number): void {
     if (this.response.headersSent) return;
@@ -130,7 +130,7 @@ export class Context {
   }
 
   /**
-   * 发送文本响应
+   * Send text response
    */
   text(data: string, status?: number): void {
     if (this.response.headersSent) return;
@@ -140,7 +140,7 @@ export class Context {
   }
 
   /**
-   * 发送HTML响应
+   * Send HTML response
    */
   html(data: string, status?: number): void {
     if (this.response.headersSent) return;
@@ -150,7 +150,7 @@ export class Context {
   }
 
   /**
-   * 重定向
+   * Redirect
    */
   redirect(url: string, status: number = 302): void {
     if (this.response.headersSent) return;
@@ -160,7 +160,7 @@ export class Context {
   }
 
   /**
-   * 设置Cookie
+   * Set Cookie
    */
   setCookie(
     name: string,
@@ -212,7 +212,7 @@ export class Context {
   }
 
   /**
-   * 解析请求体
+   * Parse request body
    */
   async parseBody(): Promise<ParsedBody | null> {
     if (this._bodyParsed) {
@@ -226,12 +226,12 @@ export class Context {
       (this.getHeader('content-length') as string) || '0'
     );
 
-    // 检查请求体大小
+    // Check request body size
     if (contentLength > this.options.maxRequestSize) {
       throw new Error(`Request body too large: ${contentLength} bytes`);
     }
 
-    // 读取请求体
+    // Read request body
     const chunks: Buffer[] = [];
     let totalLength = 0;
 
@@ -273,7 +273,7 @@ export class Context {
   }
 
   /**
-   * 解析URL和查询参数
+   * Parse URL and query parameters
    */
   private parseUrl(): void {
     const parsed = parseUrl(this.url, true);
@@ -284,7 +284,7 @@ export class Context {
   }
 
   /**
-   * 解析Cookies
+   * Parse Cookies
    */
   private parseCookies(): void {
     const cookieHeader = this.getHeader('cookie') as string;
@@ -299,22 +299,22 @@ export class Context {
   }
 
   /**
-   * 发送响应
+   * Send response
    */
   private _send(data: string): void {
     if (this.response.headersSent || this._responded) return;
 
     this._responded = true;
 
-    // 设置状态码
+    // Set status code
     this.response.statusCode = this._status;
 
-    // 设置响应头
+    // Set response headers
     for (const [name, value] of Object.entries(this._headers)) {
       this.response.setHeader(name, value);
     }
 
-    // 发送响应体
+    // Send response body
     this.response.end(data);
   }
 }

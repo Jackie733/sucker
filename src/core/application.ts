@@ -1,14 +1,18 @@
 /**
- * 自建Web框架 - 核心应用类
- * 基于Node.js原生HTTP模块构建的现代化Web框架
+ * Custom Web Framework - Core Application Class
+ * Modern web framework built on Node.js native HTTP module
  */
 
-import { IncomingMessage, ServerResponse, Server } from 'node:http';
-import { createServer } from 'node:http';
 import { EventEmitter } from 'node:events';
-import { Router } from './router';
+import {
+  createServer,
+  IncomingMessage,
+  Server,
+  ServerResponse
+} from 'node:http';
 import { Context } from './context';
-import { MiddlewareManager, Middleware } from './middleware';
+import { Middleware, MiddlewareManager } from './middleware';
+import { Router } from './router';
 
 export interface AppOptions {
   port?: number;
@@ -18,8 +22,8 @@ export interface AppOptions {
 }
 
 /**
- * 应用主类
- * 管理HTTP服务器、路由、中间件等
+ * Main application class for the custom web framework
+ * Manages HTTP server, routing, middleware, etc.
  */
 export class Application extends EventEmitter {
   private server: Server;
@@ -34,7 +38,7 @@ export class Application extends EventEmitter {
       port: options.port || 3000,
       host: options.host || '0.0.0.0',
       maxRequestSize: options.maxRequestSize || 1024 * 1024, // 1MB
-      timeout: options.timeout || 30000 // 30秒
+      timeout: options.timeout || 30000 // 30 seconds
     };
 
     this.router = new Router();
@@ -45,7 +49,7 @@ export class Application extends EventEmitter {
   }
 
   /**
-   * 设置服务器
+   * Setup server
    */
   private setupServer(): void {
     this.server.timeout = this.options.timeout;
@@ -59,7 +63,7 @@ export class Application extends EventEmitter {
       this.emit('close');
     });
 
-    // 优雅关闭处理
+    // Graceful shutdown handling
     const gracefulShutdown = async (signal: string) => {
       console.log(`Received ${signal}, closing server gracefully...`);
 
@@ -68,7 +72,7 @@ export class Application extends EventEmitter {
         process.exit(0);
       });
 
-      // 强制退出
+      // Force exit
       setTimeout(() => {
         console.error('Forcing server shutdown');
         process.exit(1);
@@ -80,42 +84,42 @@ export class Application extends EventEmitter {
   }
 
   /**
-   * 添加中间件
+   * Add middleware
    */
   use(middleware: Middleware): void {
     this.middlewareManager.use(middleware);
   }
 
   /**
-   * 添加GET路由
+   * Add GET route
    */
   get(path: string, handler: Function, middleware?: Function[]): void {
     this.router.addRoute('GET', path, handler, middleware);
   }
 
   /**
-   * 添加POST路由
+   * Add POST route
    */
   post(path: string, handler: Function, middleware?: Function[]): void {
     this.router.addRoute('POST', path, handler, middleware);
   }
 
   /**
-   * 添加PUT路由
+   * Add PUT route
    */
   put(path: string, handler: Function, middleware?: Function[]): void {
     this.router.addRoute('PUT', path, handler, middleware);
   }
 
   /**
-   * 添加DELETE路由
+   * Add DELETE route
    */
   delete(path: string, handler: Function, middleware?: Function[]): void {
     this.router.addRoute('DELETE', path, handler, middleware);
   }
 
   /**
-   * 启动服务器
+   * Start server
    */
   async listen(): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -133,7 +137,7 @@ export class Application extends EventEmitter {
   }
 
   /**
-   * 停止服务器
+   * Stop server
    */
   async close(): Promise<void> {
     return new Promise(resolve => {
@@ -144,7 +148,7 @@ export class Application extends EventEmitter {
   }
 
   /**
-   * 获取服务器信息
+   * Get server info
    */
   get serverInfo() {
     return {
@@ -157,7 +161,7 @@ export class Application extends EventEmitter {
   }
 
   /**
-   * 处理HTTP请求
+   * Handle HTTP requests
    */
   private async handleRequest(
     req: IncomingMessage,
@@ -166,20 +170,20 @@ export class Application extends EventEmitter {
     const startTime = Date.now();
 
     try {
-      // 创建上下文
+      // Create context
       const ctx = new Context(req, res, {
         maxRequestSize: this.options.maxRequestSize
       });
 
-      // 解析路径
+      // Parse path
       const url = new URL(req.url || '/', `http://${req.headers.host}`);
       const pathname = url.pathname;
 
-      // 匹配路由
+      // Match route
       const route = this.router.match(req.method || 'GET', pathname);
 
       if (!route) {
-        // 执行中间件链，如果没有中间件处理，返回404
+        // Execute middleware chain, return 404 if no middleware handles it
         await this.middlewareManager.execute(ctx, async () => {
           if (!ctx.responded) {
             ctx.status = 404;
@@ -192,10 +196,10 @@ export class Application extends EventEmitter {
         return;
       }
 
-      // 设置路由参数
+      // Set route parameters
       Object.assign(ctx.params, route.params);
 
-      // 执行中间件链和路由处理器
+      // Execute middleware chain and route handler
       await this.middlewareManager.execute(ctx, async () => {
         if (!ctx.responded) {
           await route.handler(ctx);
@@ -207,7 +211,7 @@ export class Application extends EventEmitter {
   }
 
   /**
-   * 错误处理
+   * Error handling
    */
   private async handleError(
     req: IncomingMessage,
@@ -227,7 +231,7 @@ export class Application extends EventEmitter {
 
     this.emit('error', errorInfo);
 
-    // 如果响应还没发送，发送500错误
+    // If response hasn't been sent, send 500 error
     if (!res.headersSent) {
       try {
         res.statusCode = 500;
@@ -239,7 +243,7 @@ export class Application extends EventEmitter {
           })
         );
       } catch (writeError) {
-        // 如果写入失败，只能关闭连接
+        // If write fails, destroy the connection
         res.destroy();
       }
     }
