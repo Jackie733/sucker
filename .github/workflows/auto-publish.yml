@@ -48,29 +48,37 @@ jobs:
     needs: check-version
     runs-on: ubuntu-latest
     if: needs.check-version.outputs.version-changed == 'true'
+    permissions:
+      contents: write
+      packages: write
+      id-token: write
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           registry-url: 'https://registry.npmjs.org'
           cache: 'pnpm'
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
-
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --no-frozen-lockfile
 
       - name: Run quality checks
         run: |
           pnpm run lint
+          pnpm run format:check
           pnpm run build
 
       - name: Create git tag
@@ -78,23 +86,31 @@ jobs:
           VERSION=${{ needs.check-version.outputs.new-version }}
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag -a "v$VERSION" -m "Release version $VERSION"
-          git push origin "v$VERSION"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+          # 检查标签是否已存在
+          if git rev-parse "v$VERSION" >/dev/null 2>&1; then
+            echo "Tag v$VERSION already exists, skipping tag creation"
+          else
+            git tag -a "v$VERSION" -m "Release version $VERSION"
+            git push origin "v$VERSION"
+          fi
 
       - name: Publish to npm
-        run: pnpm publish --access public
+        run: |
+          # 检查包是否已发布
+          if npm view @jackie733/sucker@${{ needs.check-version.outputs.new-version }} version 2>/dev/null; then
+            echo "Package version ${{ needs.check-version.outputs.new-version }} already exists on npm"
+            exit 1
+          fi
+          pnpm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_SUCKER_TOKEN }}
 
       - name: Create GitHub Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ needs.check-version.outputs.new-version }}
-          release_name: Release v${{ needs.check-version.outputs.new-version }}
+          name: Release v${{ needs.check-version.outputs.new-version }}
           body: |
             ## Changes in v${{ needs.check-version.outputs.new-version }}
 
@@ -102,7 +118,17 @@ jobs:
 
             ### Installation
             ```bash
-            pnpm install @jackie733/sucker@${{ needs.check-version.outputs.new-version }}
+            npm install @jackie733/sucker@${{ needs.check-version.outputs.new-version }}
+            # or
+            pnpm add @jackie733/sucker@${{ needs.check-version.outputs.new-version }}
+            # or
+            yarn add @jackie733/sucker@${{ needs.check-version.outputs.new-version }}
             ```
+
+            ### What's Changed
+            - Package version updated to ${{ needs.check-version.outputs.new-version }}
+            - View full changelog: https://github.com/${{ github.repository }}/compare/v${{ needs.check-version.outputs.new-version }}...HEAD
           draft: false
           prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
