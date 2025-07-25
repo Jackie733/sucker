@@ -1,31 +1,56 @@
 {
-  "name": "sucker",
+  "name": "@jackie733/sucker",
   "version": "0.1.0",
-  "description": "A modern TypeScript-based web framework",
-  "main": "dist/app.js",
+  "description": "A modern TypeScript-based web framework built on Node.js native HTTP module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "engines": {
-    "node": ">=22"
+    "node": ">=20.6.0"
   },
   "scripts": {
     "build": "tsc",
+    "prepublishOnly": "npm run check",
     "dev": "node --env-file=.env --watch -r ts-node/register src/app.ts",
     "start": "node dist/app.js",
     "lint": "oxlint src/",
     "lint:fix": "oxlint --fix src/",
     "format": "prettier --write src/**/*.ts",
-    "check": "npm run lint && npm run format && npm run build"
+    "check": "npm run lint && npm run format && npm run build",
+    "test": "node --test test/*.test.js",
+    "release:patch": "npm version patch && git push && git push --tags",
+    "release:minor": "npm version minor && git push && git push --tags",
+    "release:major": "npm version major && git push && git push --tags",
+    "release:dry": "npm pack --dry-run"
   },
+  "files": [
+    "dist/core/**/*",
+    "dist/middleware/**/*",
+    "README.md",
+    "LICENSE"
+  ],
   "keywords": [
     "typescript",
     "nodejs",
     "web-framework",
-    "blog",
     "http-server",
     "middleware",
-    "router"
+    "router",
+    "cors",
+    "rate-limiting",
+    "framework",
+    "fast",
+    "lightweight"
   ],
   "author": "Jackie Tsien",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jackie733/sucker.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Jackie733/sucker/issues"
+  },
+  "homepage": "https://github.com/Jackie733/sucker#readme",
   "devDependencies": {
     "@types/node": "^20.11.17",
     "@typescript-eslint/eslint-plugin": "^6.19.1",

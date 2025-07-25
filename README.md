@@ -1,150 +1,161 @@
-# Custom Blog Framework
+# Sucker
 
-一个基于 TypeScript 和 Node.js 原生 HTTP 模块开发的现代化 Web 框架，专为个人博客设计。
+A modern, high-performance web framework built with TypeScript and Node.js native HTTP module.
 
-## ✨ 特性
+[![npm version](https://badge.fury.io/js/@jackie733/sucker-framework.svg)](https://badge.fury.io/js/@jackie733/sucker-framework)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)](https://www.typescriptlang.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-20.6+-green.svg)](https://nodejs.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-- 🚀 **高性能** - 基于 Node.js 原生 HTTP 模块，零第三方框架依赖
-- 🔒 **类型安全** - 完全使用 TypeScript 开发，提供完整的类型支持
-- 🧅 **洋葱模型** - 支持异步中间件，采用洋葱模型执行顺序
-- 🛣️ **智能路由** - 支持参数路由、通配符路由和嵌套路由
-- 🔐 **内置安全** - 包含 CORS、Rate Limiting、XSS 防护等安全中间件
-- 📊 **性能监控** - 内置请求日志和性能指标收集
-- 🐳 **容器友好** - 支持 Docker 部署和优雅关闭
+## ✨ Features
 
-## 🚀 快速开始
+- 🚀 **High Performance** - Built on Node.js native HTTP module with zero framework dependencies
+- 🔒 **Type Safe** - Full TypeScript support with complete type definitions
+- 🧅 **Onion Model** - Async middleware with onion-style execution order
+- 🛣️ **Smart Routing** - Parameter routes, wildcard routes, and nested routing
+- 🔐 **Built-in Security** - CORS, Rate Limiting, XSS protection and more
+- 📊 **Performance Monitoring** - Built-in request logging and metrics collection
+- 🐳 **Container Ready** - Docker deployment and graceful shutdown support
 
-### 环境要求
+## 🚀 Quick Start
 
-- Node.js >= 20.6.0
-- TypeScript >= 5.0
-
-### 安装依赖
-
-```bash
-npm install
-```
-
-### 开发模式
+### Installation
 
 ```bash
-# 复制环境变量文件
-cp .env.example .env
-
-# 启动开发服务器 (带热重载)
-npm run dev
+npm install @jackie733/sucker
 ```
 
-### 生产构建
-
-```bash
-# 构建项目
-npm run build
-
-# 启动生产服务器
-npm start
-```
-
-## 📁 项目结构
-
-```
-src/
-├── core/                # 框架核心
-│   ├── application.ts   # 主应用类
-│   ├── router.ts       # 路由系统
-│   ├── context.ts      # 请求上下文
-│   └── middleware.ts   # 中间件管理器
-├── middleware/         # 内置中间件
-│   └── builtin.ts     # 常用中间件集合
-└── app.ts             # 应用入口和示例
-```
-
-## 🛠️ 核心API
-
-### 创建应用
+### Basic Usage
 
 ```typescript
-import { Application } from './core/application';
+import { Application } from '@jackie733/sucker';
+import { cors, logger, bodyParser } from '@jackie733/sucker/middleware';
 
 const app = new Application({
   port: 3000,
-  host: '0.0.0.0',
-  maxRequestSize: 1024 * 1024 * 10, // 10MB
-  timeout: 30000
+  host: '0.0.0.0'
 });
-```
 
-### 添加中间件
-
-```typescript
-import { cors, logger, bodyParser } from './middleware/builtin';
-
+// Add middleware
 app.use(logger({ format: 'combined' }));
 app.use(cors({ origin: '*' }));
 app.use(bodyParser());
+
+// Define routes
+app.get('/api/hello', async ctx => {
+  ctx.json({ message: 'Hello World!' });
+});
+
+app.get('/api/users/:id', async ctx => {
+  const { id } = ctx.params;
+  ctx.json({ id, name: `User ${id}` });
+});
+
+// Start server
+app.listen();
 ```
 
-### 定义路由
+## �️ API Reference
+
+### Application
 
 ```typescript
-// GET 路由
-app.get('/api/posts', async ctx => {
-  ctx.json({ posts: [] });
-});
+import { Application, ApplicationConfig } from '@jackie733/sucker';
 
-// 参数路由
-app.get('/api/posts/:id', async ctx => {
-  const { id } = ctx.params;
-  ctx.json({ id, title: `Post ${id}` });
-});
-
-// POST 路由
-app.post('/api/posts', async ctx => {
-  const { title, content } = ctx.body;
-  ctx.status = 201;
-  ctx.json({ id: Date.now(), title, content });
-});
+const app = new Application(config?: ApplicationConfig);
 ```
 
-### 请求上下文
+**Configuration Options:**
+
+```typescript
+interface ApplicationConfig {
+  port?: number; // Default: 3000
+  host?: string; // Default: '0.0.0.0'
+  maxRequestSize?: number; // Default: 10MB
+  timeout?: number; // Default: 30000ms
+}
+```
+
+### Context API
+
+The context object provides access to request and response:
 
 ```typescript
 app.get('/example', async ctx => {
-  // 请求信息
-  console.log(ctx.method); // GET
-  console.log(ctx.url); // /example?foo=bar
-  console.log(ctx.query); // { foo: 'bar' }
-  console.log(ctx.headers); // 请求头
-  console.log(ctx.params); // 路由参数
-  console.log(ctx.body); // 请求体 (需要bodyParser中间件)
+  // Request properties
+  ctx.method; // HTTP method
+  ctx.url; // Full URL
+  ctx.path; // URL pathname
+  ctx.query; // Query parameters object
+  ctx.headers; // Request headers
+  ctx.params; // Route parameters
+  ctx.body; // Request body (with bodyParser middleware)
 
-  // 响应操作
+  // Response methods
   ctx.status = 200;
   ctx.setHeader('X-Custom', 'value');
-  ctx.json({ message: 'Hello World' });
-
-  // 或者
+  ctx.json({ data: 'value' });
   ctx.text('Hello World');
-  ctx.html('<h1>Hello World</h1>');
+  ctx.html('<h1>Hello</h1>');
   ctx.redirect('/other-page');
 });
 ```
 
-## 🔧 内置中间件
+### Routing
+
+```typescript
+// HTTP methods
+app.get('/path', handler);
+app.post('/path', handler);
+app.put('/path', handler);
+app.delete('/path', handler);
+app.patch('/path', handler);
+
+// Route parameters
+app.get('/users/:id', async ctx => {
+  const userId = ctx.params.id;
+});
+
+// Multiple parameters
+app.get('/users/:userId/posts/:postId', async ctx => {
+  const { userId, postId } = ctx.params;
+});
+
+// Query parameters
+app.get('/search', async ctx => {
+  const { q, page = 1 } = ctx.query;
+});
+```
+
+## 🔧 Built-in Middleware
+
+Import middleware from the middleware submodule:
+
+```typescript
+import {
+  cors,
+  logger,
+  bodyParser,
+  rateLimit,
+  errorHandler,
+  staticFiles
+} from '@jackie733/sucker/middleware';
+```
 
 ### CORS
 
 ```typescript
 app.use(
   cors({
-    origin: ['http://localhost:3000'],
+    origin: ['http://localhost:3000', 'https://yourdomain.com'],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true
+    credentials: true,
+    maxAge: 86400 // Cache preflight for 24 hours
   })
 );
 ```
 
-### 请求日志
+### Request Logger
 
 ```typescript
 app.use(
@@ -154,67 +165,137 @@ app.use(
 );
 ```
 
-### 频率限制
+### Body Parser
+
+```typescript
+app.use(
+  bodyParser({
+    limit: '10mb',
+    enableTypes: ['json', 'form', 'text']
+  })
+);
+```
+
+### Rate Limiting
 
 ```typescript
 app.use(
   rateLimit({
-    windowMs: 15 * 60 * 1000, // 15分钟
-    max: 100 // 每个IP最多100个请求
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // Limit each IP to 100 requests per windowMs
+    message: 'Too many requests'
   })
 );
 ```
 
-### 错误处理
+### Static Files
+
+```typescript
+app.use(
+  staticFiles({
+    root: './public',
+    prefix: '/static'
+  })
+);
+```
+
+### Error Handler
 
 ```typescript
 app.use(
   errorHandler({
-    expose: process.env.NODE_ENV === 'development'
+    expose: process.env.NODE_ENV === 'development',
+    format: 'json' // 'json' | 'html' | 'text'
   })
 );
 ```
 
-## 📊 性能特性
+### Custom Middleware
 
-- **零拷贝流处理** - 支持大文件的流式上传下载
-- **连接池优化** - HTTP Keep-Alive 连接复用
-- **内存管理** - 自动垃圾回收和内存泄漏防护
-- **并发控制** - 智能的请求并发限制
+```typescript
+app.use(async (ctx, next) => {
+  const start = Date.now();
 
-## 🔒 安全特性
+  try {
+    await next();
+  } catch (error) {
+    ctx.status = 500;
+    ctx.json({ error: 'Internal Server Error' });
+  }
 
-- **CORS 防护** - 可配置的跨域资源共享
-- **Rate Limiting** - 请求频率限制防止 DDoS
-- **XSS 防护** - 自动转义输出内容
-- **请求大小限制** - 防止大请求攻击
-- **安全响应头** - 自动设置安全相关的HTTP头
-
-## 🧪 测试
-
-```bash
-# 运行测试
-npm test
-
-# 观察模式
-npm run test:watch
-
-# 覆盖率报告
-npm run test:coverage
+  const duration = Date.now() - start;
+  console.log(`${ctx.method} ${ctx.path} - ${duration}ms`);
+});
 ```
 
-## 📈 监控和日志
+## 📊 Performance Features
 
-框架内置了完整的监控和日志系统：
+- **Zero-copy Stream Processing** - Efficient handling of large file uploads/downloads
+- **Connection Pool Optimization** - HTTP Keep-Alive connection reuse
+- **Memory Management** - Automatic garbage collection and memory leak protection
+- **Concurrency Control** - Smart request concurrency limiting
 
-- 请求日志 (访问日志、错误日志)
-- 性能指标 (响应时间、内存使用)
-- 健康检查端点
-- 优雅关闭机制
+## 🔒 Security Features
 
-## 🚢 部署
+- **CORS Protection** - Configurable Cross-Origin Resource Sharing
+- **Rate Limiting** - Request frequency limiting to prevent DDoS
+- **XSS Protection** - Automatic output content escaping
+- **Request Size Limiting** - Protection against large request attacks
+- **Security Headers** - Automatic security-related HTTP headers
 
-### Docker 部署
+## 🏗️ TypeScript Support
+
+The framework is built with TypeScript and provides full type definitions:
+
+```typescript
+import type {
+  Context,
+  Middleware,
+  RouteHandler,
+  ApplicationConfig
+} from '@jackie733/sucker';
+
+const middleware: Middleware = async (ctx, next) => {
+  // ctx is fully typed
+  await next();
+};
+
+const handler: RouteHandler = async ctx => {
+  // Full intellisense support
+  ctx.json({ message: 'Typed response' });
+};
+```
+
+## 🧪 Testing
+
+```bash
+# Install dev dependencies for testing
+npm install --save-dev jest @types/jest supertest
+
+# Example test
+import { Application } from '@jackie733/sucker';
+import request from 'supertest';
+
+describe('API Tests', () => {
+  const app = new Application();
+
+  app.get('/test', async ctx => {
+    ctx.json({ success: true });
+  });
+
+  test('should return success', async () => {
+    const response = await request(app.callback())
+      .get('/test')
+      .expect(200);
+
+    expect(response.body.success).toBe(true);
+  });
+});
+```
+
+## 🚢 Deployment
+
+### Docker
 
 ```dockerfile
 FROM node:20-alpine
@@ -223,18 +304,18 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci --production
 
-COPY dist ./dist
+COPY . .
 EXPOSE 3000
 
-CMD ["node", "dist/app.js"]
+CMD ["node", "index.js"]
 ```
 
-### PM2 部署
+### PM2
 
 ```json
 {
-  "name": "blog-server",
-  "script": "dist/app.js",
+  "name": "my-app",
+  "script": "index.js",
   "instances": "max",
   "exec_mode": "cluster",
   "env": {
@@ -244,10 +325,21 @@ CMD ["node", "dist/app.js"]
 }
 ```
 
-## 🤝 贡献
+## 📚 Examples
 
-欢迎提交 Issue 和 Pull Request！
+Check out the [examples directory](https://github.com/jackie733/sucker/tree/main/examples) for complete sample applications.
 
-## 📄 许可证
+## 🤝 Contributing
 
-MIT License
+Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) for details.
+
+## 📄 License
+
+MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🔗 Links
+
+- [GitHub Repository](https://github.com/jackie733/sucker)
+- [npm Package](https://www.npmjs.com/package/@jackie733/sucker)
+- [Documentation](https://github.com/jackie733/sucker#readme)
+- [Issue Tracker](https://github.com/jackie733/sucker/issues)

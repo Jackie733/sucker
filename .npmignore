@@ -1,0 +1,43 @@
+# Source files
+src/
+*.ts
+!*.d.ts
+
+# Development files
+.env
+.env.example
+.vscode/
+docs/
+framework-design.md
+
+# Build artifacts
+tsconfig.json
+.eslintrc.js
+.prettierrc
+oxlint.json
+
+# Development dependencies
+node_modules/
+pnpm-lock.yaml
+package-lock.json
+
+# Git and GitHub
+.git/
+.github/
+.gitignore
+
+# Test files
+tests/
+test/
+*.test.js
+*.test.ts
+*.spec.js
+*.spec.ts
+
+# Example application
+src/app.ts
+
+# Documentation files (keep README.md)
+FRAMEWORK_REQUIREMENTS.md
+QUICK_SETUP.md
+CHECKLIST.md
