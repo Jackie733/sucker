@@ -24,25 +24,30 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
+          cache: 'pnpm'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Run linting
-        run: npm run lint
+        run: pnpm run lint
 
       - name: Check formatting
-        run: npm run format -- --check
+        run: pnpm run format -- --check
 
       - name: Build project
-        run: npm run build
+        run: pnpm run build
 
       - name: Run tests
-        run: npm test || echo "No tests configured yet"
+        run: pnpm test || echo "No tests configured yet"
 
       - name: Check package validity
-        run: npm pack --dry-run
+        run: pnpm pack --json
 
   # 自动发布到 npm (仅在 release 时触发)
   publish:
@@ -59,18 +64,23 @@ jobs:
         with:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
-          cache: 'npm'
+          cache: 'pnpm'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Build project
-        run: npm run build
+        run: pnpm run build
 
       - name: Publish to npm
-        run: npm publish --access public
+        run: pnpm publish --access public
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_SUCKER_TOKEN }}
 
   # 版本标签同步 (推送到 main/master 分支时)
   version-check:

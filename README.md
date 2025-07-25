@@ -23,6 +23,10 @@ A modern, high-performance web framework built with TypeScript and Node.js nativ
 
 ```bash
 npm install @jackie733/sucker
+# or
+pnpm install @jackie733/sucker
+# or
+yarn add @jackie733/sucker
 ```
 
 ### Basic Usage
@@ -55,7 +59,7 @@ app.get('/api/users/:id', async ctx => {
 app.listen();
 ```
 
-## �️ API Reference
+## ℹ️ API Reference
 
 ### Application
 

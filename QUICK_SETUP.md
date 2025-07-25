@@ -19,7 +19,7 @@
    - 进入你的 GitHub 仓库
    - Settings → Secrets and variables → Actions
    - New repository secret:
-     - Name: `NPM_TOKEN`
+     - Name: `NPM_SUCKER_TOKEN`
      - Secret: 粘贴你的 npm 令牌
 
 ## 第二步：推送工作流文件到 GitHub
@@ -29,7 +29,7 @@
 git add .
 
 # 提交变更
-git commit -m "feat: add GitHub Actions auto-publish workflows"
+git commit -m "feat: add GitHub Actions auto-publish workflows with pnpm support"
 
 # 推送到 GitHub
 git push origin main
@@ -41,13 +41,13 @@ git push origin main
 
 ```bash
 # 更新补丁版本 (0.1.0 → 0.1.1)
-npm run release:patch
+pnpm run release:patch
 
 # 或者更新次要版本 (0.1.0 → 0.2.0)
-npm run release:minor
+pnpm run release:minor
 
 # 或者更新主要版本 (0.1.0 → 1.0.0)
-npm run release:major
+pnpm run release:major
 ```
 
 这将会：
@@ -86,8 +86,8 @@ npm run release:major
    ```bash
    # 在新目录测试安装
    mkdir test-install && cd test-install
-   npm init -y
-   npm install @jackie733/sucker
+   pnpm init
+   pnpm install @jackie733/sucker
    ```
 
 ## 📋 工作流说明
@@ -119,10 +119,10 @@ git checkout main
 git merge feature/new-feature
 
 # 3. 发布新版本
-npm run release:patch  # 自动更新版本并发布
+pnpm run release:patch  # 自动更新版本并发布
 
 # 4. 验证发布
-npm view @jackie733/sucker version
+pnpm view @jackie733/sucker version
 ```
 
 ## 🎉 完成！
