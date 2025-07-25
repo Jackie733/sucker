@@ -1,6 +1,6 @@
 {
   "name": "@jackie733/sucker",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A modern TypeScript-based web framework built on Node.js native HTTP module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
